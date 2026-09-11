@@ -49,8 +49,7 @@ final class LockTest extends PHPUnitTestCase
         $second = new Lock($this->path, timeoutSeconds: 0.5);
 
         try {
-            $this->expectException(PurchaserException::class);
-            $this->expectExceptionMessage('ロックを取得できませんでした');
+            $this->expectExceptionObject(new PurchaserException('ロックを取得できませんでした'));
 
             $second->acquire();
         } finally {

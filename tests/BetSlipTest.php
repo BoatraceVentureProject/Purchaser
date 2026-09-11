@@ -58,8 +58,7 @@ final class BetSlipTest extends PHPUnitTestCase
      */
     public function test_combination_treats_reversed_order_as_duplicate(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('同じ買い目が重複しています');
+        $this->expectExceptionObject(new PurchaserException('同じ買い目が重複しています'));
 
         BetSlip::fromFocuses(['1=2' => 100, '2=1' => 100], betType: 4);
     }
@@ -79,8 +78,7 @@ final class BetSlipTest extends PHPUnitTestCase
      */
     public function test_leg_count_must_match_bet_type(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('組番の要素数が賭式と一致しません');
+        $this->expectExceptionObject(new PurchaserException('組番の要素数が賭式と一致しません'));
 
         BetSlip::fromFocuses(['1-2' => 100], betType: 6);
     }
@@ -90,8 +88,7 @@ final class BetSlipTest extends PHPUnitTestCase
      */
     public function test_amount_must_be_multiple_of_one_hundred(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('100円単位');
+        $this->expectExceptionObject(new PurchaserException('100円単位'));
 
         BetSlip::fromFocuses(['1-2-3' => 150], betType: 6);
     }
@@ -111,8 +108,7 @@ final class BetSlipTest extends PHPUnitTestCase
      */
     public function test_leg_out_of_range_is_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('1〜6 以外');
+        $this->expectExceptionObject(new PurchaserException('1〜6 以外'));
 
         BetSlip::fromFocuses(['1-2-7' => 100], betType: 6);
     }
@@ -122,8 +118,7 @@ final class BetSlipTest extends PHPUnitTestCase
      */
     public function test_repeated_boat_number_is_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('同じ艇番が重複');
+        $this->expectExceptionObject(new PurchaserException('同じ艇番が重複'));
 
         BetSlip::fromFocuses(['1-1-2' => 100], betType: 6);
     }
@@ -133,8 +128,7 @@ final class BetSlipTest extends PHPUnitTestCase
      */
     public function test_empty_focuses_is_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('買い目が空です');
+        $this->expectExceptionObject(new PurchaserException('買い目が空です'));
 
         BetSlip::fromFocuses([], betType: 6);
     }
@@ -144,8 +138,7 @@ final class BetSlipTest extends PHPUnitTestCase
      */
     public function test_unknown_bet_type_is_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('賭式が不正です');
+        $this->expectExceptionObject(new PurchaserException('賭式が不正です'));
 
         /** @psalm-suppress InvalidArgument */
         BetSlip::fromFocuses(['1-2-3' => 100], betType: 8);

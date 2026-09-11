@@ -24,8 +24,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_empty_races_are_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('レースが空です。');
+        $this->expectExceptionObject(new PurchaserException('レースが空です。'));
 
         /** @psalm-suppress ArgumentTypeCoercion 呼び出し側が空を渡しうるので、実行時に落ちることを確かめる */
         (new Purchaser())->purchaseMany([]);
@@ -38,8 +37,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_races_out_of_deadline_order_are_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('レースが締切の早い順に並んでいません。');
+        $this->expectExceptionObject(new PurchaserException('レースが締切の早い順に並んでいません。'));
 
         (new Purchaser())->purchaseMany([
             [
@@ -64,8 +62,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_the_same_race_and_bet_type_twice_is_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('同じレース・同じ賭式が重複しています。');
+        $this->expectExceptionObject(new PurchaserException('同じレース・同じ賭式が重複しています。'));
 
         (new Purchaser())->purchaseMany([
             ['stadiumNumber' => 24, 'number' => 12, 'type' => 6, 'focuses' => ['1-2-3' => 100]],
@@ -82,8 +79,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_the_same_race_with_a_different_bet_type_passes_validation(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('purchase の開始 を中止しました。');
+        $this->expectExceptionObject(new PurchaserException('purchase の開始 を中止しました。'));
 
         (new Purchaser())->purchaseMany([
             [
@@ -110,8 +106,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_the_batch_limit_stops_the_sum_of_all_races(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('購入金額の合計 3000 円が1セッションの上限 2000 円を超えています。');
+        $this->expectExceptionObject(new PurchaserException('購入金額の合計 3000 円が1セッションの上限 2000 円を超えています。'));
 
         (new Purchaser())
             ->setMaxTotalAmount(1000)
@@ -132,8 +127,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_the_batch_limit_falls_back_to_the_per_race_limit(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('1セッションの上限 ' . Purchaser::DEFAULT_MAX_TOTAL_AMOUNT . ' 円');
+        $this->expectExceptionObject(new PurchaserException('1セッションの上限 ' . Purchaser::DEFAULT_MAX_TOTAL_AMOUNT . ' 円'));
 
         (new Purchaser())->purchaseMany([
             ['stadiumNumber' => 24, 'number' => 11, 'type' => 6, 'focuses' => ['1-2-3' => 10000]],
@@ -146,8 +140,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_the_per_race_limit_still_applies(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('1レースの上限 1000 円を超えています。');
+        $this->expectExceptionObject(new PurchaserException('1レースの上限 1000 円を超えています。'));
 
         (new Purchaser())
             ->setMaxTotalAmount(1000)
@@ -163,8 +156,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_an_invalid_race_number_is_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('レース番号が不正です。number=13（1〜12）');
+        $this->expectExceptionObject(new PurchaserException('レース番号が不正です。number=13（1〜12）'));
 
         (new Purchaser())->purchaseMany([
             ['stadiumNumber' => 24, 'number' => 12, 'type' => 6, 'focuses' => ['1-2-3' => 100]],
@@ -179,8 +171,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_a_broken_focus_in_a_later_race_is_rejected(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('組番の要素数が賭式と一致しません。');
+        $this->expectExceptionObject(new PurchaserException('組番の要素数が賭式と一致しません。'));
 
         (new Purchaser())->purchaseMany([
             ['stadiumNumber' => 24, 'number' => 11, 'type' => 6, 'focuses' => ['1-2-3' => 100]],
@@ -195,8 +186,7 @@ final class PurchaseManyTest extends PHPUnitTestCase
      */
     public function test_the_session_deadline_applies_to_races_without_one(): void
     {
-        $this->expectException(PurchaserException::class);
-        $this->expectExceptionMessage('purchase の開始 を中止しました。');
+        $this->expectExceptionObject(new PurchaserException('purchase の開始 を中止しました。'));
 
         (new Purchaser())
             ->setDeadline(new DateTimeImmutable('2000-01-01 15:00:00'))
